@@ -1,3 +1,0 @@
-Mes. 		http://10.33.27.126/MainWebFrom.aspx
-MachineID. 	KSH26EVTRH040M0100001
-stationID. 	ITKS_E03-4FT-01A_4_AE-19
