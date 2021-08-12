@@ -20,6 +20,12 @@ type TopicQuery struct {
 	Pagesize int `form:"pagesize" json:"pagesize" binding:"required"`
 }
 
+type TopicClass struct {
+	ClassId int
+	ClassName string
+	ClassRemark string
+}
+
 //func CreateTopic(id int,title string) Topic {
 //	return Topic{id,title}
 //}
