@@ -1,7 +1,6 @@
 package src
 
 import (
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"regexp"
 )
@@ -27,8 +26,10 @@ func TopicUrl(fl validator.FieldLevel) bool {
 //TODO:TopicList.Len()==TopicListSize
 func TopicsValidate(fl validator.FieldLevel) bool {
 
-	fmt.Println(fl.Field().Len())
-	if fl.Field().Len() !=0{
+	topics := fl.Parent().Interface().(Topics)
+	//b := reflect.TypeOf(a)
+
+	if fl.Field().Len() == topics.TopicListSize{
 		return true
 	}
 	return false

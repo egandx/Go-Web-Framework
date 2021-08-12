@@ -93,3 +93,30 @@ type Topics struct { //多个实体
 1、TopicList必须大于0，否则无意义。且要求小于某数字，否则服务器资源不够。
 
 2、TopicList的长度必须和TopicListSize相等，算是一个辅助验证手段。
+
+## 数据库和ORM
+
+### 开启Gorm之旅
+```
+基础配置：
+驱动：https://github.com/go-sql-driver/mysql
+gorm地址：https://github.com/go-gorm/gorm
+安装：
+# go get -u gorm.io/gorm
+# go get -u github.com/go-sql-driver/mysql
+```
+
+1、数据库建表
+
+(1)第一张表topic
+
+(2)第二张表topic_class
+
+翻译成模型
+```cgo
+type TopicsClass struct { 
+	ClassId int
+	ClassName string
+	ClassRemark string
+}
+```
