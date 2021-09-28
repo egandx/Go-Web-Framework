@@ -105,18 +105,101 @@ gorm地址：https://github.com/go-gorm/gorm
 # go get -u gorm.io/gorm
 # go get -u github.com/go-sql-driver/mysql
 ```
+###1、打印日志
 
-1、数据库建表
+v1版本的gorm，使用```db.LogMode(true)```来显示数据库的Log。
+
+in v1:
+```
+func (s *DB) LogMode(enable bool) *DB {
+	if enable {
+		s.logMode = detailedLogMode
+	} else {
+		s.logMode = noLogMode
+	}
+	return s
+}
+```
+
+And in global can do set:
+```
+db.LogMode(m.Debug) // m.Debug = true or false
+```
+
+v2版本的gorm,in v2 How to achieve the same effect？Silent or Error or Warn or Info? can achieve the same effect?
+```
+db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{
+  Logger: logger.Default.LogMode(logger.Info),
+})
+```
+
+###2、数据库建表
 
 (1)第一张表topic
 
-(2)第二张表topic_class
+(2)第二张表topic_classes
 
 翻译成模型
 ```cgo
-type TopicsClass struct { 
+type TopicClass struct { 
 	ClassId int
 	ClassName string
 	ClassRemark string
 }
 ```
+#### 表名规则
+1、根据Struct名称，默认将其改写为小写并修改为复数形式。例如：
+```text
+struct 名称为
+1）Test，对应的数据库表名为 tests，
+2）TopicClass 对应的数据库表名为 topic_classes(是一个复数)
+```
+gorm 也有对应的函数，使其不加复数。
+
+in v1：
+```go
+db.SingularTable(true)
+```
+
+in v2：
+```go
+dsn := "root:12345678@/gin?charset=utf8mb4&parseTime=True&loc=Local"
+	db, _ := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+	})
+```
+
+#### 指定表名或者列名
+在维护历史项目的时候，很多时候没有办法去修改数据库的表名或者列名。需要我们
+在程序中指定表名或者列名。
+
+```go
+type TopicClass struct {
+	ClassId int
+	ClassName string
+	ClassRemark string
+	ClassType string `gorm:"column:classtype"`
+}
+```
+
+### 连接池设置
+
+https://gorm.io/docs/generic_interface.html
+```text
+// Get generic database object sql.DB to use its functions
+sqlDB, err := db.DB()
+
+// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
+sqlDB.SetMaxIdleConns(10)
+
+// SetMaxOpenConns sets the maximum number of open connections to the database.
+sqlDB.SetMaxOpenConns(100)
+
+// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
+sqlDB.SetConnMaxLifetime(time.Hour)
+```
+
+

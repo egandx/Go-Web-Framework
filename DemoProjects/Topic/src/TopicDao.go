@@ -20,6 +20,13 @@ func MustLogin() gin.HandlerFunc {
 func GetTopicDetail(c *gin.Context) {
 	//c.String(200, "获取topicID为%s的帖子内容", c.Param("topic_id"))
 	//c.JSON(200, CreateTopic(111, "帖子标题"))
+
+	tid := c.Param("topic_id")
+	topics := Topics{}
+
+	db.Find(&topics, tid)
+	c.JSON(http.StatusOK,topics)
+
 }
 
 func GetTopicList(c *gin.Context) {
@@ -43,7 +50,7 @@ func GetTopicList(c *gin.Context) {
 func AddTopic(c *gin.Context) { //单条帖子新增
 	//c.String(200, "新增帖子")
 
-	topic := Topic{}
+	topic := Topics{}
 
 	err := c.BindJSON(&topic)
 	if err != nil {
