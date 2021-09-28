@@ -105,7 +105,7 @@ gorm地址：https://github.com/go-gorm/gorm
 # go get -u gorm.io/gorm
 # go get -u github.com/go-sql-driver/mysql
 ```
-###1、打印日志
+### 1、打印日志
 
 v1版本的gorm，使用```db.LogMode(true)```来显示数据库的Log。
 
@@ -133,7 +133,7 @@ db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{
 })
 ```
 
-###2、数据库建表
+### 2、数据库建表
 
 (1)第一张表topic
 
