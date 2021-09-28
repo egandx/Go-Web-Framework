@@ -26,10 +26,10 @@ func TopicUrl(fl validator.FieldLevel) bool {
 //TODO:TopicList.Len()==TopicListSize
 func TopicsValidate(fl validator.FieldLevel) bool {
 
-	topics := fl.Parent().Interface().(Topics)
+	topicarray := fl.Parent().Interface().(TopicArray)
 	//b := reflect.TypeOf(a)
 
-	if fl.Field().Len() == topics.TopicListSize{
+	if fl.Field().Len() == topicarray.TopicListSize{
 		return true
 	}
 	return false
