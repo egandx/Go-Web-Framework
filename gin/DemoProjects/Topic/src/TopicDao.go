@@ -74,5 +74,5 @@ func AddTopics(c *gin.Context) { //批量新增多条帖子
 }
 
 func DelTopic(c *gin.Context) {
-	c.String(200, "删除topicID为%s帖子", c.Param("topic_id"))
+	c.String(200,  "删除topicID为%s帖子", c.Param("topic_id"))
 }
