@@ -202,7 +202,6 @@ sqlDB.SetMaxOpenConns(100)
 sqlDB.SetConnMaxLifetime(time.Hour)
 ```
 
-## todo： add test 测试
 
 
 
