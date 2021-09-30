@@ -1,11 +1,14 @@
 package src
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/gomodule/redigo/redis"
+	"log"
 	"net/http"
 )
 
-//中间件MustLogin
+// 中间件MustLogin
 func MustLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if _, ok := c.GetQuery("token"); !ok {
@@ -24,9 +27,33 @@ func GetTopicDetail(c *gin.Context) {
 	tid := c.Param("topic_id")
 	topics := Topics{}
 
-	db.Find(&topics, tid)
-	c.JSON(http.StatusOK,topics)
+	//db.Find(&topics, tid)
+	//c.JSON(http.StatusOK,topics)
 
+	conn := RedisDefaultPool.Get()
+	defer conn.Close()
+	redisKey := "topic_" + tid
+
+	ret, err := redis.Bytes(conn.Do("get", redisKey))
+
+	if err != nil { //缓存里没有，去DB
+		db.Find(&topics, tid)
+		retData, _ := json.Marshal(topics)
+
+		if topics.TopicID == 0{  //DB 没有匹配到
+			conn.Do("setex",redisKey,20,retData)
+		}else{ //DB正常数据，缓存50s
+			conn.Do("setex",redisKey,50,retData)
+		}
+
+		c.JSON(http.StatusOK,topics)
+		log.Println("从数据库读取")
+
+	} else { //缓存里有值
+		json.Unmarshal(ret,&topics)
+		c.JSON(http.StatusOK,topics)
+		log.Println("从Redis读取")
+	}
 }
 
 func GetTopicList(c *gin.Context) {
@@ -74,5 +101,5 @@ func AddTopics(c *gin.Context) { //批量新增多条帖子
 }
 
 func DelTopic(c *gin.Context) {
-	c.String(200,  "删除topicID为%s帖子", c.Param("topic_id"))
+	c.String(200, "删除topicID为%s帖子", c.Param("topic_id"))
 }

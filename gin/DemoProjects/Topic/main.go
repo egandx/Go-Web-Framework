@@ -5,29 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
-	"github.com/gomodule/redigo/redis"
 	"log"
 	"net/http"
 	"time"
 
 	. "gin/DemoProjects/Topic/src"
 )
-
-func main1() {
-	//go func() {
-	//	InitRedis()
-	//}()
-
-	conn := RedisDefaultPool.Get()
-	ret, err := redis.String(conn.Do("get", "foo"))
-
-	if err!=nil{
-		log.Println(err)
-		return
-	}
-
-	log.Println(ret)
-}
 
 func main() {
 
@@ -126,16 +109,14 @@ func main() {
 	//	InitRedis()
 	//}()
 
-	conn := RedisDefaultPool.Get()
-
-	ret, err := redis.String(conn.Do("get", "foo"))
-
-	if err!=nil{
-		log.Println(err)
-		return
-	}
-
-	log.Println(ret)
+	//conn := RedisDefaultPool.Get()
+	//ret, err := redis.String(conn.Do("get", "foo"))
+	//
+	//if err!=nil{
+	//	log.Println(err)
+	//	return
+	//}
+	//log.Println(ret)
 
 
 	ServerNotify()
