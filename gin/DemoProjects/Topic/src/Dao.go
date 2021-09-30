@@ -10,7 +10,7 @@ import (
 var db *gorm.DB
 var err error
 
-func InitDB() {
+func InitMysqlDB() {
 	dsn := "root:12345678@/gin?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),

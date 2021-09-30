@@ -1,4 +1,4 @@
-## API
+# API
 
 GET /v1/topics  默认显示所有话题列表
 
@@ -13,7 +13,7 @@ POST /v1/mtopics  和上面对比，一次性提交多条帖子
 DELETE /v1/topics/123  删除帖子（注意！这是一个需要登陆权限才能使用的）
 
 
-## 加个需求
+# 加个需求
 1、标题长度必须是4--20 ```binding:"min=4,max=20"```
 
 2、副标题和主标题不能一样 ```binding:"nefield=TopicTitle"```
@@ -94,9 +94,9 @@ type Topics struct { //多个实体
 
 2、TopicList的长度必须和TopicListSize相等，算是一个辅助验证手段。
 
-## 数据库和ORM
+# 数据库和ORM
 
-### 开启Gorm之旅
+## 开启Gorm之旅
 ```
 基础配置：
 驱动：https://github.com/go-sql-driver/mysql
@@ -239,3 +239,31 @@ log.Fatal("Server Shutdown:", err)
 }
 log.Println("Server exiting")
 ```
+
+## Gin+Redis 简单了解
+
+### Redis
+
+```
+Redis的下载、安装文档的地址
+https://redis.io/download
+
+Redis中文教程
+https://www.redis.com.cn/tutorial.html
+
+redigo的GitHub地址：
+https://github.com/gomodule/redigo
+```
+
+### 结合Gin实现基本的Redis缓存、缓存穿透简单处理
+eg API:
+
+GET /topic/4   获取帖子ID为4的帖子
+
+最简单的缓存方案：
+
+1、根据ID查看Redis缓存是否有值，如果有，则取出redis的内容并返回。
+
+2、如果没有,则从MySQL数据库中取出。取出之后，放入Redis缓存，并设置过期时间。
+
+

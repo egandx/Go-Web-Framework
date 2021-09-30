@@ -5,12 +5,29 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/gomodule/redigo/redis"
 	"log"
 	"net/http"
 	"time"
 
 	. "gin/DemoProjects/Topic/src"
 )
+
+func main1() {
+	//go func() {
+	//	InitRedis()
+	//}()
+
+	conn := RedisDefaultPool.Get()
+	ret, err := redis.String(conn.Do("get", "foo"))
+
+	if err!=nil{
+		log.Println(err)
+		return
+	}
+
+	log.Println(ret)
+}
 
 func main() {
 
@@ -52,12 +69,11 @@ func main() {
 	//
 	//fmt.Println(tcs)
 
-
 	router := gin.Default()
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("topicurl",TopicUrl)
-		v.RegisterValidation("topics",TopicsValidate)
+		v.RegisterValidation("topicurl", TopicUrl)
+		v.RegisterValidation("topics", TopicsValidate)
 	}
 
 	v1 := router.Group("/v1/topics") //单条帖子处理
@@ -66,7 +82,7 @@ func main() {
 		v1.GET("/:topic_id", GetTopicDetail)
 
 		v1.Use(gin.BasicAuth(gin.Accounts{
-			"admin":"123",
+			"admin": "123",
 		}))
 
 		v1.Use(MustLogin())
@@ -79,7 +95,7 @@ func main() {
 	v2 := router.Group("/v2/mtopics") //多条帖子处理
 	{
 		v2.Use(gin.BasicAuth(gin.Accounts{
-			"admin":"123",
+			"admin": "123",
 		}))
 
 		v2.Use(MustLogin())
@@ -103,8 +119,24 @@ func main() {
 	}()
 
 	go func() {
-		InitDB()
+		InitMysqlDB()
 	}()
+
+	//go func() {
+	//	InitRedis()
+	//}()
+
+	conn := RedisDefaultPool.Get()
+
+	ret, err := redis.String(conn.Do("get", "foo"))
+
+	if err!=nil{
+		log.Println(err)
+		return
+	}
+
+	log.Println(ret)
+
 
 	ServerNotify()
 
