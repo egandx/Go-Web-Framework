@@ -1,7 +1,6 @@
 package src
 
 import (
-	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -11,8 +10,8 @@ import (
 var db *gorm.DB
 var err error
 
-func init() {
-	dsn := "root:12345678@/gin?charset=utf8mb4&parseTime=True&loc=Local"
+func InitDB() {
+	dsn := "root:1234567@/gin?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 		NamingStrategy: schema.NamingStrategy{
@@ -20,8 +19,9 @@ func init() {
 		},
 	})
 	if err != nil {
-		//todo:stop server
-		fmt.Println(err)
+		//log.Fatal("DB初始化失败：",err)
+		ShutDownServer(err)
+		return
 	}
 
 	sqlDB, _ := db.DB()
