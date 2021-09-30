@@ -266,4 +266,30 @@ GET /topic/4   获取帖子ID为4的帖子
 
 2、如果没有,则从MySQL数据库中取出。取出之后，放入Redis缓存，并设置过期时间。
 
+```go
+conn := RedisDefaultPool.Get()
+	defer conn.Close()
+	redisKey := "topic_" + tid
+
+	ret, err := redis.Bytes(conn.Do("get", redisKey))
+
+	if err != nil { //缓存里没有，去DB
+		db.Find(&topics, tid)
+		retData, _ := json.Marshal(topics)
+
+		if topics.TopicID == 0{  //DB 没有匹配到
+			conn.Do("setex",redisKey,20,retData)
+		}else{ //DB正常数据，缓存50s
+			conn.Do("setex",redisKey,50,retData)
+		}
+
+		c.JSON(http.StatusOK,topics)
+		log.Println("从数据库读取")
+
+	} else { //缓存里有值
+		json.Unmarshal(ret,&topics)
+		c.JSON(http.StatusOK,topics)
+		log.Println("从Redis读取")
+	}
+```
 
