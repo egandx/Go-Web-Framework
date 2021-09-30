@@ -65,9 +65,9 @@ func main() {
 		v1.GET("", GetTopicList)
 		v1.GET("/:topic_id", GetTopicDetail)
 
-		//v1.Use(gin.BasicAuth(gin.Accounts{
-		//	"admin":"123",
-		//}))
+		v1.Use(gin.BasicAuth(gin.Accounts{
+			"admin":"123",
+		}))
 
 		v1.Use(MustLogin())
 		{
