@@ -26,7 +26,6 @@ func GetTopicDetail(c *gin.Context) {
 	db.Find(&topics, tid) //data from DB
 
 	c.Set("dbResultTopicDetail", topics) //send to Decorator,this is key
-
 	//conn := RedisDefaultPool.Get()
 	//defer conn.Close()
 	//redisKey := "topic_" + tid
@@ -56,40 +55,42 @@ func GetTopicDetail(c *gin.Context) {
 // GetTopicList get topic list
 func GetTopicList(c *gin.Context) {
 
-	t := Topics{}
-	var topiclist []Topics
-	length := 0
+	var topicslist []Topics
 	rows, _ := db.Raw("select * from topics").Rows()
 	for rows.Next() {
-		rows.Scan(&t.TopicID, &t.TopicTitle, &t.TopicShortTitle, &t.UserIP, &t.TopicUrl, &t.TopicScore, &t.TopicDate)
-		topiclist = append(topiclist, t)
-		length = length + 1
+		db.Find(&topicslist)
 	}
 
-	c.Set("dbResultTopicList", topiclist)
-
-	//if len(topiclist) == 0 {
-	//	c.JSON(400, "没有找到帖子")
-	//} else {
-	//	c.JSON(200, topiclist)
-	//}
+	c.Set("dbResultTopicList", topicslist)
 
 	//tl := TopicArray{
-	//	topiclist,
-	//	len,
+	//	topicslist,
+	//	len(topicslist),
 	//}
 }
 
 // QueryTopics query topic for search
 func QueryTopics(c *gin.Context)  {
+
+	username := c.Query("username")
 	query := TopicQuery{}
+	query.Pagesize = 10
 
 	err := c.BindQuery(&query)
 	if err != nil {
 		c.String(400, "参数错误：%s", err.Error())
 	} else {
-		c.JSON(200, query)
+		t := Topics{}
+		var topiclist []Topics
+		rows, _ := db.Raw("select * from topics where username=?",username).Rows()
+		for rows.Next() {
+			rows.Scan(&t.TopicID, &t.TopicTitle, &t.TopicShortTitle, &t.UserIP, &t.TopicUrl, &t.TopicScore, &t.TopicDate,&t.UserName)
+			topiclist = append(topiclist, t)
+		}
+		c.JSON(200,topiclist)
+
 	}
+
 }
 
 // AddTopic add one topic,need login

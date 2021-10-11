@@ -7,6 +7,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"log"
 	"net/http"
+	"reflect"
 )
 
 // QueryIdCacheDecorator cache decorator
@@ -29,15 +30,19 @@ func QueryIdCacheDecorator(h gin.HandlerFunc, param string, redKeyPattern string
 			}
 
 			retData, _ := json.Marshal(dbResult)
-			conn.Do("setex",redisKey,20,retData)
 
-			//if topics.TopicID == 0{  //DB 没有匹配到
-			//	conn.Do("setex",redisKey,20,retData)
-			//}else{ //DB正常数据，缓存50s
-			//	conn.Do("setex",redisKey,50,retData)
-			//}
+			obj := reflect.ValueOf(dbResult)
+			id := obj.Field(0).Interface() //反射拿值 topicID
 
-			context.JSON(http.StatusOK,dbResult)
+			if id == 0 { //DB didn't match the value,Timeout 20s
+				conn.Do("setex", redisKey, 20, retData)
+
+			} else { //DB could match the value,Timeout 50s
+				conn.Do("setex", redisKey, 50, retData)
+
+			}
+
+			context.JSON(http.StatusOK, dbResult)
 			log.Println("从数据库读取")
 
 		} else { //redis cache has v
@@ -48,7 +53,6 @@ func QueryIdCacheDecorator(h gin.HandlerFunc, param string, redKeyPattern string
 	}
 
 }
-
 
 // QueryAllCacheDecorator cache decorator
 func QueryAllCacheDecorator(h gin.HandlerFunc, redKeyPattern string, empty interface{}) gin.HandlerFunc {
@@ -69,9 +73,18 @@ func QueryAllCacheDecorator(h gin.HandlerFunc, redKeyPattern string, empty inter
 			}
 
 			retData, _ := json.Marshal(dbResult)
-			conn.Do("setex",redisKey,20,retData)
 
-			context.JSON(http.StatusOK,dbResult)
+			obj := reflect.ValueOf(dbResult)
+			length := obj.Len() //length
+
+			if length == 0 { //DB No data available
+				conn.Do("setex", redisKey, 20, retData)
+
+			} else { //DB data available
+				conn.Do("setex", redisKey, 50, retData)
+			}
+
+			context.JSON(http.StatusOK, dbResult)
 			log.Println("从数据库读取")
 
 		} else { //redis cache has v

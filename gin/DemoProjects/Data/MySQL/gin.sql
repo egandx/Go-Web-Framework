@@ -11,7 +11,7 @@
  Target Server Version : 80025
  File Encoding         : 65001
 
- Date: 29/09/2021 08:29:53
+ Date: 11/10/2021 18:02:21
 */
 
 SET NAMES utf8mb4;
@@ -58,10 +58,10 @@ CREATE TABLE `topics` (
 -- Records of topics
 -- ----------------------------
 BEGIN;
-INSERT INTO `topics` VALUES (1, '第一个标题', 'one', NULL, NULL, NULL, '2021-08-12 15:32:41');
-INSERT INTO `topics` VALUES (2, '第二个标题', NULL, NULL, NULL, NULL, '2021-08-12 15:32:55');
-INSERT INTO `topics` VALUES (3, '第二个标题', NULL, NULL, NULL, NULL, '2021-08-12 15:33:14');
-INSERT INTO `topics` VALUES (4, 'TopicTitle', 'TopicShortTitle', '127.0.0.1', 'testurl', 0, '2021-09-28 14:07:47');
+INSERT INTO `topics` VALUES (1, '兴趣电商助力经济发展', '兴趣电商', '192.168.251.11', 'https://192.168.251.11/1', 12, '2021-08-12 15:32:41');
+INSERT INTO `topics` VALUES (2, '阿里蚂蚁捐款7000万驰援山西', '阿里捐款', '192.168.251.12', 'https://192.168.251.11/2', 34, '2021-08-12 15:32:55');
+INSERT INTO `topics` VALUES (3, '美团被罚，反垄断监管规则更加清晰', '美团被罚', '192.168.251.13', 'https://192.168.251.11/3', 56, '2021-08-12 15:33:14');
+INSERT INTO `topics` VALUES (4, 'SpaceX准备安装星际飞船发射塔巨型机械臂', 'SpaceX开始星际飞船', '192.168.251.14', 'https://192.168.251.11/4', 78, '2021-09-28 14:07:47');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

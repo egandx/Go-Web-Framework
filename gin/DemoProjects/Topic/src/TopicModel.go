@@ -10,6 +10,7 @@ type Topics struct { //单个topic实体
 	TopicScore int `json:"score" binding:"omitempty,gt=5"`
 	TopicUrl string `json:"url" binding:"omitempty,topicurl"`
 	TopicDate time.Time `json:"date" binding:"required"`
+	UserName string `json:"username" gorm:"column:username"`
 }
 
 type TopicArray struct { //多个实体
