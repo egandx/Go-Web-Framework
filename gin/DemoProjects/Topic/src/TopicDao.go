@@ -25,7 +25,7 @@ func GetTopicDetail(c *gin.Context) {
 
 	db.Find(&topics, tid) //data from DB
 
-	c.Set("dbResult", topics) //send to Decorator,this is key
+	c.Set("dbResultTopicDetail", topics) //send to Decorator,this is key
 
 	//conn := RedisDefaultPool.Get()
 	//defer conn.Close()
@@ -66,11 +66,13 @@ func GetTopicList(c *gin.Context) {
 		length = length + 1
 	}
 
-	if len(topiclist) == 0 {
-		c.JSON(400, "没有找到帖子")
-	} else {
-		c.JSON(200, topiclist)
-	}
+	c.Set("dbResultTopicList", topiclist)
+
+	//if len(topiclist) == 0 {
+	//	c.JSON(400, "没有找到帖子")
+	//} else {
+	//	c.JSON(200, topiclist)
+	//}
 
 	//tl := TopicArray{
 	//	topiclist,

@@ -61,8 +61,9 @@ func main() {
 
 	v1 := router.Group("/v1/topics") //单条帖子处理
 	{
-		v1.GET("", GetTopicList)
-		v1.GET("/:topic_id", CacheDecorator(GetTopicDetail,"topic_id","topic_%s",Topics{}))
+		var topiclist []Topics
+		v1.GET("", QueryAllCacheDecorator(GetTopicList,"topic_all",topiclist))
+		v1.GET("/:topic_id", QueryIdCacheDecorator(GetTopicDetail,"topic_id","topic_%s",Topics{}))
 		v1.GET("/search", QueryTopics)
 
 		v1.Use(gin.BasicAuth(gin.Accounts{
