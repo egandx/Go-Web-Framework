@@ -17,18 +17,15 @@ func MustLogin() gin.HandlerFunc {
 	}
 }
 
+// GetTopicDetail get topic detail
 func GetTopicDetail(c *gin.Context) {
-	//c.String(200, "获取topicID为%s的帖子内容", c.Param("topic_id"))
-	//c.JSON(200, CreateTopic(111, "帖子标题"))
 
 	tid := c.Param("topic_id")
 	topics := Topics{}
 
-	db.Find(&topics, tid)		//data from DB
+	db.Find(&topics, tid) //data from DB
 
-	c.Set("dbResult",topics) //send to Decorator,this is key
-
-
+	c.Set("dbResult", topics) //send to Decorator,this is key
 
 	//conn := RedisDefaultPool.Get()
 	//defer conn.Close()
@@ -56,13 +53,33 @@ func GetTopicDetail(c *gin.Context) {
 	//}
 }
 
+// GetTopicList get topic list
 func GetTopicList(c *gin.Context) {
-	//if c.Query("username") == "" {
-	//	c.String(200, "获取所有帖子列表")
-	//} else {
-	//	c.String(200, "获取用户名为%s的帖子列表", c.Query("username"))
-	//}
 
+	t := Topics{}
+	var topiclist []Topics
+	length := 0
+	rows, _ := db.Raw("select * from topics").Rows()
+	for rows.Next() {
+		rows.Scan(&t.TopicID, &t.TopicTitle, &t.TopicShortTitle, &t.UserIP, &t.TopicUrl, &t.TopicScore, &t.TopicDate)
+		topiclist = append(topiclist, t)
+		length = length + 1
+	}
+
+	if len(topiclist) == 0 {
+		c.JSON(400, "没有找到帖子")
+	} else {
+		c.JSON(200, topiclist)
+	}
+
+	//tl := TopicArray{
+	//	topiclist,
+	//	len,
+	//}
+}
+
+// QueryTopics query topic for search
+func QueryTopics(c *gin.Context)  {
 	query := TopicQuery{}
 
 	err := c.BindQuery(&query)
@@ -73,7 +90,7 @@ func GetTopicList(c *gin.Context) {
 	}
 }
 
-// 需要登陆
+// AddTopic add one topic,need login
 func AddTopic(c *gin.Context) { //单条帖子新增
 	//c.String(200, "新增帖子")
 
@@ -87,6 +104,7 @@ func AddTopic(c *gin.Context) { //单条帖子新增
 	}
 }
 
+// AddTopics add more topics,need login
 func AddTopics(c *gin.Context) { //批量新增多条帖子
 	//c.String(200, "新增帖子")
 
@@ -100,6 +118,7 @@ func AddTopics(c *gin.Context) { //批量新增多条帖子
 	}
 }
 
+// DelTopic del topic, need login
 func DelTopic(c *gin.Context) {
 	c.String(200, "删除topicID为%s帖子", c.Param("topic_id"))
 }

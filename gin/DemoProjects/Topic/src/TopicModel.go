@@ -20,8 +20,8 @@ type TopicArray struct { //多个实体
 
 type TopicQuery struct {
 	Username string `form:"username" json:"username" binding:"required"`
-	Page int `form:"page" json:"page" binding:"required"`
-	Pagesize int `form:"pagesize" json:"pagesize" binding:"required"`
+	Page int `form:"page" json:"page"`
+	Pagesize int `form:"pagesize" json:"pagesize"`
 }
 
 type TopicClass struct {

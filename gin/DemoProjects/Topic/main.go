@@ -63,6 +63,7 @@ func main() {
 	{
 		v1.GET("", GetTopicList)
 		v1.GET("/:topic_id", CacheDecorator(GetTopicDetail,"topic_id","topic_%s",Topics{}))
+		v1.GET("/search", QueryTopics)
 
 		v1.Use(gin.BasicAuth(gin.Accounts{
 			"admin": "123",

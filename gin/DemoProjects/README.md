@@ -29,9 +29,9 @@
 
 # API
 
-GET /v1/topics  默认显示所有话题列表
+GET /v1/topics  默认显示所有帖子的详细内容
 
-GET /v1/topics?username=XXX  显示用户发布的帖子
+GET /v1/topics/search?username=A  查找用户A发布的帖子
 
 GET /v1/topics/123  显示帖子ID为123的详细内容
 
@@ -69,9 +69,11 @@ type TopicQuery struct {
 }
 ```
 
-    binding:"required" //加了这个，表示该参数必不可少，少了就报错
-    参数错误：
-    Key: 'TopicQuery.Username' Error:Field validation for 'Username' failed on the 'required' tag
+```text
+binding:"required" //加了这个，表示该参数必不可少，少了就报错
+参数错误：
+Key: 'TopicQuery.Username' Error:Field validation for 'Username' failed on the 'required' tag
+```
 form 决定了绑定query参数的key到底是啥
 
 另外两个没写form 不会进行绑定
