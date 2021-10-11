@@ -1,3 +1,32 @@
+# 项目结构
+```
+.
+├── Data
+│   ├── MySQL
+│   │   └── gin.sql
+│   └── img
+│       └── tree.png
+├── README.md
+├── Test
+└── Topic
+    ├── main.go
+    └── src
+        ├── Dao.go
+        ├── Decorator.go
+        ├── MyInit.go
+        ├── MyRedis.go
+        ├── MyValidator.go
+        ├── TopicDao.go
+        └── TopicModel.go
+```
+/Data存放数据，例如数据库表和数据，方便更换设备时，数据库的迁移。
+
+/Test存放测试类，暂时还没写测试，后面再说吧
+
+/Topic存放项目的主要代码
+
+
+
 # API
 
 GET /v1/topics  默认显示所有话题列表
@@ -273,7 +302,7 @@ conn := RedisDefaultPool.Get()
 
 	ret, err := redis.Bytes(conn.Do("get", redisKey))
 
-	if err != nil { //缓存里没有，去DB
+	if err != nil { //redis hasn't v,goto DB
 		db.Find(&topics, tid)
 		retData, _ := json.Marshal(topics)
 
@@ -293,3 +322,32 @@ conn := RedisDefaultPool.Get()
 	}
 ```
 
+### 使用装饰器函数 实现redis封装
+高阶函数
+```go
+func CacheDecortor(h gin.HandlerFunc) gin.HandlersChain{
+    return func(context *gin.Context) {
+    }
+}
+
+// router
+v1.GET("/:topic_id", CacheDecortor(GetTopicDetail))
+```
+
+```go
+// Add parameters to make it more generic
+func CacheDecorator(h gin.HandlerFunc,param string,redKeyPattern string,empty interface{}) gin.HandlerFunc {
+    return func(context *gin.Context) {
+    // redis determine
+    }
+}
+
+param 是获取的参数ID,装饰器并不清楚获取的参数ID是多少
+redKeyPattern 是redis中key的格式,装饰器并不清楚redis存的key是什么格式
+empty 传入一个空对象,用于转化
+```
+
+
+# 结束
+几个函数，只有```GetTopicDetail()```做了比较全面的处理，其他的几个不想动了。
+http://localhost:8080/v1/topics/4

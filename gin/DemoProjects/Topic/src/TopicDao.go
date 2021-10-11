@@ -1,10 +1,7 @@
 package src
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/gomodule/redigo/redis"
-	"log"
 	"net/http"
 )
 
@@ -27,33 +24,36 @@ func GetTopicDetail(c *gin.Context) {
 	tid := c.Param("topic_id")
 	topics := Topics{}
 
-	//db.Find(&topics, tid)
-	//c.JSON(http.StatusOK,topics)
+	db.Find(&topics, tid)		//data from DB
 
-	conn := RedisDefaultPool.Get()
-	defer conn.Close()
-	redisKey := "topic_" + tid
+	c.Set("dbResult",topics) //send to Decorator,this is key
 
-	ret, err := redis.Bytes(conn.Do("get", redisKey))
 
-	if err != nil { //缓存里没有，去DB
-		db.Find(&topics, tid)
-		retData, _ := json.Marshal(topics)
 
-		if topics.TopicID == 0{  //DB 没有匹配到
-			conn.Do("setex",redisKey,20,retData)
-		}else{ //DB正常数据，缓存50s
-			conn.Do("setex",redisKey,50,retData)
-		}
-
-		c.JSON(http.StatusOK,topics)
-		log.Println("从数据库读取")
-
-	} else { //缓存里有值
-		json.Unmarshal(ret,&topics)
-		c.JSON(http.StatusOK,topics)
-		log.Println("从Redis读取")
-	}
+	//conn := RedisDefaultPool.Get()
+	//defer conn.Close()
+	//redisKey := "topic_" + tid
+	//
+	//ret, err := redis.Bytes(conn.Do("get", redisKey))
+	//
+	//if err != nil { //缓存里没有，去DB
+	//	db.Find(&topics, tid)
+	//	retData, _ := json.Marshal(topics)
+	//
+	//	if topics.TopicID == 0{  //DB 没有匹配到
+	//		conn.Do("setex",redisKey,20,retData)
+	//	}else{ //DB正常数据，缓存50s
+	//		conn.Do("setex",redisKey,50,retData)
+	//	}
+	//
+	//	c.JSON(http.StatusOK,topics)
+	//	log.Println("从数据库读取")
+	//
+	//} else { //缓存里有值
+	//	json.Unmarshal(ret,&topics)
+	//	c.JSON(http.StatusOK,topics)
+	//	log.Println("从Redis读取")
+	//}
 }
 
 func GetTopicList(c *gin.Context) {
