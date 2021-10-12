@@ -349,7 +349,6 @@ redKeyPattern 是redis中key的格式,装饰器并不清楚redis存的key是什�
 empty 传入一个空对象,用于转化
 ```
 
-
 # 结束
 几个函数，只有```GetTopicDetail()```做了比较全面的处理，其他的几个不想动了。
 http://localhost:8080/v1/topics/4

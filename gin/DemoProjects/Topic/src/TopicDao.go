@@ -1,11 +1,13 @@
 package src
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
-// 中间件MustLogin
+// MustLogin 中间件
 func MustLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if _, ok := c.GetQuery("token"); !ok {
@@ -17,7 +19,7 @@ func MustLogin() gin.HandlerFunc {
 	}
 }
 
-// GetTopicDetail get topic detail
+// GetTopicDetail get topic detail by topic_id
 func GetTopicDetail(c *gin.Context) {
 
 	tid := c.Param("topic_id")
@@ -52,7 +54,7 @@ func GetTopicDetail(c *gin.Context) {
 	//}
 }
 
-// GetTopicList get topic list
+// GetTopicList get all of topic
 func GetTopicList(c *gin.Context) {
 
 	var topicslist []Topics
@@ -69,8 +71,8 @@ func GetTopicList(c *gin.Context) {
 	//}
 }
 
-// QueryTopics query topic for search
-func QueryTopics(c *gin.Context)  {
+// QueryTopics query topic for search by username
+func QueryTopics(c *gin.Context) {
 
 	username := c.Query("username")
 	query := TopicQuery{}
@@ -83,11 +85,11 @@ func QueryTopics(c *gin.Context)  {
 		t := Topics{}
 		var topiclist []Topics
 		size := 0
-		rows, _ := db.Raw("select * from topics where username=?",username).Rows()
+		rows, _ := db.Raw("select * from topics where username=?", username).Rows()
 		for rows.Next() {
-			rows.Scan(&t.TopicID, &t.TopicTitle, &t.TopicShortTitle, &t.UserIP, &t.TopicUrl, &t.TopicScore, &t.TopicDate,&t.UserName)
+			rows.Scan(&t.TopicID, &t.TopicTitle, &t.TopicShortTitle, &t.UserIP, &t.TopicUrl, &t.TopicScore, &t.TopicDate, &t.UserName)
 			topiclist = append(topiclist, t)
-			size ++
+			size++
 		}
 		TotalPage := size/query.Pagesize + 1
 
@@ -107,16 +109,37 @@ func QueryTopics(c *gin.Context)  {
 
 // AddTopic add one topic,need login
 func AddTopic(c *gin.Context) { //单条帖子新增
-	//c.String(200, "新增帖子")
 
 	topic := Topics{}
 
 	err := c.BindJSON(&topic)
 	if err != nil {
-		c.String(400, "参数错误：%s", err.Error())
+		msg := fmt.Sprintf("参数错误：%s", err.Error())
+		c.JSON(400, msg)
+
 	} else {
-		c.JSON(200, topic)
+		t := Topics{
+			TopicTitle:      topic.TopicTitle,
+			TopicShortTitle: topic.TopicShortTitle,
+			UserIP:          topic.UserIP,
+			TopicScore:      topic.TopicScore,
+			TopicUrl:        topic.TopicUrl,
+			TopicDate:       time.Now().Format("2006-01-02 15:04:05"),
+			UserName:        topic.UserName,
+		}
+
+		if err := db.Create(&t).Error; err != nil {
+			fmt.Println("插入失败:", err)
+			return
+		}else{
+			c.JSON(200, "OK")
+
+		}
+
+
+
 	}
+
 }
 
 // AddTopics add more topics,need login

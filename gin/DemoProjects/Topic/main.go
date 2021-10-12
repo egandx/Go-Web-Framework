@@ -56,15 +56,15 @@ func main() {
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("topicurl", TopicUrl)
-		v.RegisterValidation("topics", TopicsValidate)		//验证长度
+		v.RegisterValidation("topics", TopicsValidate) //验证长度
 	}
 
 	v1 := router.Group("/v1/topics") //单条帖子处理
 	{
 		var topiclist []Topics
-		v1.GET("", QueryAllCacheDecorator(GetTopicList,"topic_all",topiclist))
-		v1.GET("/:topic_id", QueryIdCacheDecorator(GetTopicDetail,"topic_id","topic_%s",Topics{}))
-		v1.GET("/search", QueryUserCacheDecorator(QueryTopics,"username","topic_%s",topiclist))
+		v1.GET("", QueryAllCacheDecorator(GetTopicList, "topic_all", topiclist))
+		v1.GET("/:topic_id", QueryIdCacheDecorator(GetTopicDetail, "topic_id", "topic_%s", Topics{}))
+		v1.GET("/search", QueryUserCacheDecorator(QueryTopics, "username", "topic_%s", topiclist))
 
 		v1.Use(gin.BasicAuth(gin.Accounts{
 			"admin": "123",
@@ -119,7 +119,6 @@ func main() {
 	//	return
 	//}
 	//log.Println(ret)
-
 
 	ServerNotify()
 

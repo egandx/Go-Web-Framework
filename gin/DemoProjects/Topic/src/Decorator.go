@@ -41,7 +41,6 @@ func QueryIdCacheDecorator(h gin.HandlerFunc, param string, redKeyPattern string
 				conn.Do("setex", redisKey, 50, retData)
 
 			}
-
 			context.JSON(http.StatusOK, dbResult)
 			log.Println("从数据库读取")
 
