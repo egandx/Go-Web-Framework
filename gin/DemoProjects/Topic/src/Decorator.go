@@ -95,3 +95,37 @@ func QueryAllCacheDecorator(h gin.HandlerFunc, redKeyPattern string, empty inter
 	}
 
 }
+
+
+func QueryUserCacheDecorator(h gin.HandlerFunc, param string, redKeyPattern string, empty interface{}) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		// redis determine
+		username := context.Query(param)
+		redisKey := fmt.Sprintf(redKeyPattern, username)
+
+		conn := RedisDefaultPool.Get()
+		defer conn.Close()
+
+		ret, err := redis.Bytes(conn.Do("get", redisKey))
+
+		if err != nil { //redis hasn't v
+			h(context) //执行目标方法
+			dbResult, exists := context.Get("dbResultUsername")
+			if !exists {
+				dbResult = empty
+			}
+			retData, _ := json.Marshal(dbResult)
+
+			conn.Do("setex", redisKey, 20, retData)
+
+			context.JSON(http.StatusOK, dbResult)
+			log.Println("从数据库读取")
+
+		} else { //redis cache has v
+			json.Unmarshal(ret, &empty)
+			context.JSON(http.StatusOK, empty)
+			log.Println("从Redis读取")
+		}
+	}
+
+}

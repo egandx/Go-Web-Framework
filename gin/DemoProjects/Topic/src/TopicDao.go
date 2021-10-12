@@ -56,7 +56,7 @@ func GetTopicDetail(c *gin.Context) {
 func GetTopicList(c *gin.Context) {
 
 	var topicslist []Topics
-	rows, _ := db.Raw("select * from topics").Rows()
+	rows, _ := db.Find(&Topics{}).Rows()
 	for rows.Next() {
 		db.Find(&topicslist)
 	}
@@ -82,13 +82,25 @@ func QueryTopics(c *gin.Context)  {
 	} else {
 		t := Topics{}
 		var topiclist []Topics
+		size := 0
 		rows, _ := db.Raw("select * from topics where username=?",username).Rows()
 		for rows.Next() {
 			rows.Scan(&t.TopicID, &t.TopicTitle, &t.TopicShortTitle, &t.UserIP, &t.TopicUrl, &t.TopicScore, &t.TopicDate,&t.UserName)
 			topiclist = append(topiclist, t)
+			size ++
 		}
-		c.JSON(200,topiclist)
+		TotalPage := size/query.Pagesize + 1
 
+		var p map[string]interface{}
+		p = make(map[string]interface{})
+
+		p["Topic_list"] = topiclist
+		p["Size"] = size
+		p["Total_page"] = TotalPage
+		p["Page_size"] = query.Pagesize
+
+		//c.JSON(200,p)
+		c.Set("dbResultUsername", p)
 	}
 
 }
