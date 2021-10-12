@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"reflect"
 	"time"
 )
 
@@ -108,7 +109,7 @@ func QueryTopics(c *gin.Context) {
 }
 
 // AddTopic add one topic,need login
-func AddTopic(c *gin.Context) { //单条帖子新增
+func AddTopic(c *gin.Context) {
 
 	topic := Topics{}
 
@@ -131,29 +132,54 @@ func AddTopic(c *gin.Context) { //单条帖子新增
 		if err := db.Create(&t).Error; err != nil {
 			fmt.Println("插入失败:", err)
 			return
-		}else{
+		} else {
 			c.JSON(200, "OK")
-
 		}
-
-
-
 	}
 
 }
 
-// AddTopics add more topics,need login
-func AddTopics(c *gin.Context) { //批量新增多条帖子
-	//c.String(200, "新增帖子")
+// AddMultipleTopics AddTopics batch add more topics,need login
+func AddMultipleTopics(c *gin.Context) {
 
-	topics := Topics{}
+	topicslist := make(map[string]interface{}) //注意该结构接受的内容
 
-	err := c.BindJSON(&topics)
+	err := c.BindJSON(&topicslist)
 	if err != nil {
 		c.String(400, "参数错误：%s", err.Error())
 	} else {
-		c.JSON(200, topics)
+		//num := topicslist["num"]
+
+		//for _, v := range topicslist {
+		//
+		//	x:=typeof(v)
+		//
+		//	if x=="map[string]interface {}" {
+		//		t := Topics{
+		//			TopicTitle:      "",
+		//			TopicShortTitle: "",
+		//			UserIP:          "topic.UserIP",
+		//			TopicScore:      0,
+		//			TopicUrl:        "topic.TopicUrl",
+		//			TopicDate:       time.Now().Format("2006-01-02 15:04:05"),
+		//			UserName:        "topic.UserName",
+		//		}
+		//
+		//		if err := db.Create(&t).Error; err != nil {
+		//			fmt.Println("插入失败:", err)
+		//			return
+		//		} else {
+		//			c.JSON(200, "OK")
+		//		}
+		//	}
+		//}
+
+		c.JSON(200, topicslist)
 	}
+}
+
+func typeof(v interface{}) string {
+	return reflect.TypeOf(v).String()
 }
 
 // DelTopic del topic, need login

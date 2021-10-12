@@ -85,7 +85,7 @@ func main() {
 
 		v2.Use(MustLogin())
 		{
-			v2.POST("", AddTopics)
+			v2.POST("", AddMultipleTopics)
 			v2.DELETE("/:topic_id", DelTopic)
 		}
 	}
