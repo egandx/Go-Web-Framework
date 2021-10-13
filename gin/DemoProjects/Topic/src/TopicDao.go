@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"reflect"
 	"time"
 )
 
@@ -139,47 +138,32 @@ func AddTopic(c *gin.Context) {
 
 }
 
-// AddMultipleTopics AddTopics batch add more topics,need login
+// AddMultipleTopics batch add more topics,need login
 func AddMultipleTopics(c *gin.Context) {
 
-	topicslist := make(map[string]interface{}) //注意该结构接受的内容
-
-	err := c.BindJSON(&topicslist)
+	Tarray := TopicArray{}
+	err := c.BindJSON(&Tarray)
 	if err != nil {
 		c.String(400, "参数错误：%s", err.Error())
 	} else {
-		//num := topicslist["num"]
+		for _, v := range Tarray.TopicList {
+			t := Topics{
+				TopicTitle:      v.TopicTitle,
+				TopicShortTitle: v.TopicShortTitle,
+				UserIP:          v.UserIP,
+				TopicScore:      v.TopicScore,
+				TopicUrl:        v.TopicUrl,
+				TopicDate:       time.Now().Format("2006-01-02 15:04:05"),
+				UserName:        v.UserName,
+			}
 
-		//for _, v := range topicslist {
-		//
-		//	x:=typeof(v)
-		//
-		//	if x=="map[string]interface {}" {
-		//		t := Topics{
-		//			TopicTitle:      "",
-		//			TopicShortTitle: "",
-		//			UserIP:          "topic.UserIP",
-		//			TopicScore:      0,
-		//			TopicUrl:        "topic.TopicUrl",
-		//			TopicDate:       time.Now().Format("2006-01-02 15:04:05"),
-		//			UserName:        "topic.UserName",
-		//		}
-		//
-		//		if err := db.Create(&t).Error; err != nil {
-		//			fmt.Println("插入失败:", err)
-		//			return
-		//		} else {
-		//			c.JSON(200, "OK")
-		//		}
-		//	}
-		//}
-
-		c.JSON(200, topicslist)
+			if err := db.Create(&t).Error; err != nil {
+				fmt.Println("插入失败:", err)
+				return
+			}
+		}
+		c.JSON(200, "batch insert OK")
 	}
-}
-
-func typeof(v interface{}) string {
-	return reflect.TypeOf(v).String()
 }
 
 // DelTopic del topic, need login
