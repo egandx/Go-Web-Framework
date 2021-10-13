@@ -43,7 +43,7 @@ DELETE /v1/topics/123  删除帖子（注意！这是一个需要登陆权限才
 
 # API交互示例
 #### [send]
-```http://localhost:8080/v1/topics```
+```GET http://localhost:8080/v1/topics```
 
 #### [respond]
 ```json
@@ -81,7 +81,7 @@ DELETE /v1/topics/123  删除帖子（注意！这是一个需要登陆权限才
 ]
 ```
 #### [send]
-```http://localhost:8080/v1/topics/2```
+```GET http://localhost:8080/v1/topics/2```
 
 #### [respond]
 ```json
@@ -98,7 +98,7 @@ DELETE /v1/topics/123  删除帖子（注意！这是一个需要登陆权限才
 ```
 
 #### [send]
-```http://localhost:8080/v1/topics/search?username=玛卡巴卡```
+```GET http://localhost:8080/v1/topics/search?username=玛卡巴卡```
 
 #### [respond]
 ```json
@@ -122,7 +122,7 @@ DELETE /v1/topics/123  删除帖子（注意！这是一个需要登陆权限才
 ```
 
 #### [send]
-```http://localhost:8080/v1/topics?token=124```
+```POST http://localhost:8080/v1/topics?token=124```
 ```
 auth user/password=admin/123
 ```
@@ -137,7 +137,7 @@ auth user/password=admin/123
 
 
 #### [send]
-```http://localhost:8080/v2/mtopics?token=ssss```
+```POST http://localhost:8080/v2/mtopics?token=ssss```
 ```
 auth user/password=admin/123
 ```
@@ -171,7 +171,7 @@ auth user/password=admin/123
 ```
 
 #### [send]
-```http://localhost:8080/v1/topics/6?token=qwqw```
+```DELETE http://localhost:8080/v1/topics/6?token=qwqw```
 ```
 auth user/password=admin/123
 ```
