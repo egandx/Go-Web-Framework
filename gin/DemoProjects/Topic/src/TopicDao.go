@@ -87,7 +87,10 @@ func QueryTopics(c *gin.Context) {
 		size := 0
 		rows, _ := db.Raw("select * from topics where username=?", username).Rows()
 		for rows.Next() {
-			rows.Scan(&t.TopicID, &t.TopicTitle, &t.TopicShortTitle, &t.UserIP, &t.TopicUrl, &t.TopicScore, &t.TopicDate, &t.UserName)
+			err := rows.Scan(&t.TopicID, &t.TopicTitle, &t.TopicShortTitle, &t.UserIP, &t.TopicUrl, &t.TopicScore, &t.TopicDate, &t.UserName)
+			if err != nil {
+				fmt.Println(err)
+			}
 			topiclist = append(topiclist, t)
 			size++
 		}
@@ -138,7 +141,7 @@ func AddTopic(c *gin.Context) {
 
 }
 
-// AddMultipleTopics batch add more topics,need login
+// AddMultipleTopics batch add many topics,need login
 func AddMultipleTopics(c *gin.Context) {
 
 	Tarray := TopicArray{}
@@ -168,5 +171,13 @@ func AddMultipleTopics(c *gin.Context) {
 
 // DelTopic del topic, need login
 func DelTopic(c *gin.Context) {
-	c.String(200, "删除topicID为%s帖子", c.Param("topic_id"))
+	tid := c.Param("topic_id")
+	topics := Topics{}
+	affected := db.Where("topic_id = ?", tid).Find(&topics).RowsAffected
+	if affected == 0 {
+		c.JSON(200, "This topic does not exist")
+		return
+	}
+	db.Delete(&topics, tid)
+	c.JSON(200, "del ok")
 }
