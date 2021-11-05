@@ -38,18 +38,18 @@ protoc --go-grpc_out=./ --go-grpc_opt=paths=source_relative ProductInfo.proto
 
 ## 三、Start
 
-### 1、创建proto文件
+### 1、Create proto file
 ```protobuf
 syntax = "proto3";
 package services;
 option go_package="../services";
 
 message ProdRequest {
-  int32 prod_id = 1;  //商品ID
+  int32 prod_id = 1;  //product ID
 }
 
 message ProdResponse {
-  int32 prod_stock = 1; //商品库存
+  int32 prod_stock = 1; //product stock
 }
 
 service ProdService {
@@ -61,25 +61,27 @@ service ProdService {
 protoc --go-grpc_out=../services --go-grpc_opt=paths=source_relative Prod.proto
 ```
 
-### 2、创建gRPCServer和gRPCClient
+### 2、Create gRPCServer and gRPCClient
 
-### 3、自签证书
+### 3、Self-signed certificate
 ```shell
-3.1 执行OpenSSL
+3.1 exec OpenSSL
     >openssl
 
-3.2 生成grpcserver.key 私钥文件
+3.2 generate grpcserver.key,Private key file
     OpenSSL>genrsa -des3 -out grpcserver.key 2048
 
-3.3 创建证书请求,生成grpcserver.csr
+3.3 Create certificate request, generate grpcserver.csr
     OpenSSL>req -new -key grpcserver.key -out grpcserver.csr
 
-3.4 删除密码
+3.4 del password
     OpenSSL>rsa -in grpcserver.key -out grpcserver_no_password.key
 
-3.5 生成grpcserver.crt,自签证书完成
+3.5 generate grpcserver.crt,Self-signed certificate completed!
     OpenSSL>x509 -req -days 365 -in grpcserver.csr -signkey grpcserver_no_password.key -out grpcserver.crt
 
 ```
+
+### 4、Add certificate code
 
 

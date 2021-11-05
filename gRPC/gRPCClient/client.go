@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"log"
 )
 
@@ -12,7 +13,12 @@ const address = "127.0.0.1:8082"
 
 func main() {
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	creds, err := credentials.NewClientTLSFromFile("keys/grpcserver.crt","egan.com")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Println("dial connect fail.", err)
 		return
